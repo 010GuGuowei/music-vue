@@ -5,7 +5,7 @@ const debug = process.env.NODE_ENV !== 'production'
 
 export function getRecommend () {
   // 线上环境地址，同学们根据自己的需要配置修改
-  const url = debug ? '/api/getTopBanner' : 'http://ustbhuangyi.com/music/api/getTopBanner'
+  const url =  '/api/getTopBanner' 
 
   const data = Object.assign({}, commonParams, {
     platform: 'yqq.json',

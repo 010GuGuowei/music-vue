@@ -3,9 +3,9 @@
 <!-- <m-header></m-header>-->
 <!--    <MHeader /> &lt;!&ndash; 两种方式&ndash;&gt;-->
 <!--    <tab></tab>-->
-    <keep-alive>
+<!--    <keep-alive>-->
         <router-view />
-    </keep-alive>
+<!--    </keep-alive>-->
   </div>
 
 </template>

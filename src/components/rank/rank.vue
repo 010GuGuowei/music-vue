@@ -10,7 +10,7 @@
                             <img :src="item.picUrl" width="100" height="100">
                         </div>
                         <ul class="songlist">
-                            <li v-for="(song,index) in item.songList" class="song">
+                            <li v-for="(song,index) in item.songList" class="song" @click="selectItem(item)">
                                 <span>{{index + 1}}.</span>
                                 <span>{{song.songname}} - {{song.singername}}</span>
                             </li>
@@ -54,11 +54,29 @@
             _getTopList() {
                 getTopList().then(res => {
                     this.topList = res.data.topList
-                    console.log(this.topList)
+
+                    console.log(res.data)
                 }).catch(err => {
                     console.log(err)
                 })
             },
+            selectItem(item){
+                console.log(item)
+                let data ={
+                    id : item.id,
+                    title : item.topTitle,
+
+                    //y.gtimg.cn/music/photo_new/T002R300x300M000001uWkYh16jVTM_1.jpg?max_age=2592000
+                    //y.gtimg.cn/music/photo_new/T001R300x300M000${item.Fsinger_mid}.jpg?max_age=2592000
+
+
+                }
+                console.log(data)
+                this.$store.commit('SET_RANK',data)
+                // console.log('selectItem',item)
+
+                this.$router.push(`rank/${item.id}`)
+            }
         },
         components: {
             Scroll,

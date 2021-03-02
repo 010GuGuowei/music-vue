@@ -5,17 +5,29 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
-    singer:{}
-  },
-  mutations: {
-    SET_SINGER : (state ,singer) => {
-      state.singer = singer
-    }
-  },
-  actions: {
-  },
-  modules: {
-  },
-  // plugins: debug ? [createLogger] : []
+    state: {
+        singer: {},
+        discList: {},
+        rank:{}
+    },
+    mutations: {
+        SET_SINGER: (state, singer) => {
+            state.singer = singer
+        },
+        SET_DESCLIST: (state, discList) =>{
+             state.discList = discList
+        },
+        SET_RANK:(state,rank) => {
+            state.rank = rank
+        }
+,
+
+},
+actions: {
+}
+,
+modules: {
+}
+,
+// plugins: debug ? [createLogger] : []
 })

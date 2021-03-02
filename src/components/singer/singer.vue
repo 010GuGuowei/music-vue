@@ -1,8 +1,8 @@
 <template>
     <div class="singer">
-        <MHeader />
+        <MHeader/>
         <tab></tab>
-        <list-view :data="singerList" @select="selectSinger" />
+        <list-view :data="singerList" @select="selectSinger"/>
         <router-view></router-view>
     </div>
 </template>
@@ -12,8 +12,8 @@
     import {ERR_OK} from '../../api/config'
 
     import ListView from '../../base/listview/listview'
-    import MHeader from'../m-header/m-header';
-    import Tab from'../tab/tab';
+    import MHeader from '../m-header/m-header';
+    import Tab from '../tab/tab';
     // 热门歌手数据的条数
     const hot_singer_len = 10
 
@@ -55,7 +55,7 @@
                         map.hot.item.push({
                             id: item.Fsinger_mid,  // 歌手id
                             name: item.Fsinger_name,    // 歌手name
-                            picUrl: `http://y.gtimg.cn/music/photo_new/T001R150x150M000${item.Fsinger_mid}.jpg?max_age=2592000`    // 歌手头像图片地址
+                            picUrl: `http://y.gtimg.cn/music/photo_new/T001R300x300M000${item.Fsinger_mid}.jpg?max_age=2592000`    // 歌手头像图片地址
 
                         })
                     }
@@ -72,7 +72,7 @@
                     map[key].item.push({
                         id: item.Fsinger_id,  // 歌手id
                         name: item.Fsinger_name,    // 歌手name
-                        picUrl: `http://y.gtimg.cn/music/photo_new/T001R150x150M000${item.Fsinger_mid}.jpg?max_age=2592000`    // 歌手头像图片地址
+                        picUrl: `http://y.gtimg.cn/music/photo_new/T001R300x300M000${item.Fsinger_mid}.jpg?max_age=2592000`    // 歌手头像图片地址
                     })
                 })
                 // console.log(map)
@@ -94,32 +94,32 @@
                     }
                 }
                 // 排序
-                ret.sort((a,b) => {
+                ret.sort((a, b) => {
                     return a.title.charCodeAt(0) - b.title.charCodeAt(0)
                 })
                 return hot.concat(ret, remainder)
             },
-            selectSinger(singer){
+            selectSinger(singer) {
                 this.$router.push(`/detial/${singer.id}`)
                 // console.log(singer.id)
                 this.setSinger(singer)
             },
             // 保存到 store
-            setSinger(singer){
-                this.$store.commit('SET_SINGER',singer)
+            setSinger(singer) {
+                this.$store.commit('SET_SINGER', singer)
                 // console.log(this.$store.state.singer)
             }
 
         },
-        components:{
-            ListView,MHeader,Tab
+        components: {
+            ListView, MHeader, Tab
         },
     }
 </script>
 
 <style scoped>
     .singer {
-        position: absolute;
+        position: fixed;
         top: 0;
         bottom: 0;
         width: 100%;

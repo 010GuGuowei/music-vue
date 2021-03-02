@@ -1,31 +1,46 @@
 <template>
     <div class="music-list">
-        <div class="back" >
-            <i class="icon-back"></i>
+        <div class="back" @click="back">
+            <i class="icon-back"> < </i>
         </div>
         <h1 class="title" v-html="title"></h1>
         <div class="bg-image" :style="bgStyle" ref="bgImage">
-
-<!--            <div class="filter" ref="filter"></div>-->
-
-        </div>
-        <scroll>
-        <div>
-            <div class="song-list-wrapper">
-                <song-list :songs="songs"></song-list>
+            <div class="play-wrapper">
+                <div ref="playBtn" v-show="songs.length>0" class="play" @click="random">
+                    <i class="icon-play"></i>
+                    <span class="text">随机播放全部</span>
+                </div>
             </div>
+            <div class="filter" ref="filter"></div>
         </div>
+        <div class="bg-layer" ref="layer"></div>
+<!--        <scroll :data="songs" class="list" ref="list">-->
+<!--                &lt;!&ndash;:listen-scroll="listenScroll" :probe-type="probeType" @scroll="scroll" &ndash;&gt;-->
+<!--            <div class="song-list-wrapper">-->
+<!--                <song-list :songs="songs" :rank="rank" @select="selectItem"></song-list>-->
+<!--            </div>-->
+<!--            <div v-show="!songs.length" class="loading-container">-->
+<!--                <loading></loading>-->
+<!--            </div>-->
+<!--        </scroll>-->
+        <scroll :data="songs" class="list" ref="list"
+                :listen-scroll="listenScroll" :probe-type="probeType" @scroll="scroll">
+            <div class="song-list-wrapper">
+                <song-list :songs="songs" ></song-list>
+            </div>
+            <div v-show="!songs.length" class="loading-container">
+                <loading></loading>
+            </div>
         </scroll>
-
-
     </div>
-
 </template>
+
 
 <script>
     import Scroll from '../../base/scroll/scroll'
     import SongList from '../../base/song-list/song-list'
     import Loading from '../../base/loading/loading'
+
     export default {
         name: "detial",
         props: {
@@ -35,7 +50,7 @@
             },
             songs: {
                 type: Array,
-                default () {
+                default() {
                     return []
                 }
             },
@@ -50,22 +65,66 @@
         },
         data() {
             return {
-
+                scrollY : 0
             }
         },
         created() {
-
+            this.listenScroll = true    // 是否监听滚动
+            this.probeType = 3
         },
         methods: {
+            // 返回上一级
+            back() {
+                console.log('back')
+                this.$router.go(-1)
+            },
+            random(){
+                console.log('random')
+            },
+            scroll(scroll){
+                this.scrollY = scroll.y
+            }
 
         },
         computed: {
-            bgStyle(){
+            // 返回图片地址
+            bgStyle() {
                 return `background-image:url(${this.bgImage})`
             }
         },
-        components:{
-            Scroll,SongList,Loading
+        components: {
+            Scroll, SongList, Loading
+        },
+        // 监听滚动区域的高度
+        watch:{
+            scrollY(newVal){
+                let translateY = Math.max(this.minTransalteY, newVal)
+                let scale = 1
+                let zIndex = 0
+                let blur = 0
+                const percent = Math.abs(newVal / this.imageHeight)
+                if (newVal > 0) {
+                    scale = 1 + percent
+                    zIndex = 10
+                } else {
+                    blur = Math.min(20, percent * 20)
+                }
+
+                // this.$refs.layer.style[transform] = `translate3d(0,${translateY}px,0)`
+                // this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+                // if (newVal < this.minTransalteY) {
+                //     zIndex = 10
+                //     this.$refs.bgImage.style.paddingTop = 0
+                //     this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
+                //     this.$refs.playBtn.style.display = 'none'
+                // } else {
+                //     this.$refs.bgImage.style.paddingTop = '70%'
+                //     this.$refs.bgImage.style.height = 0
+                //     this.$refs.playBtn.style.display = ''
+                // }
+                // this.$refs.bgImage.style[transform] = `scale(${scale})`
+                // this.$refs.bgImage.style.zIndex = zIndex
+            }
         }
     }
 </script>
@@ -159,12 +218,12 @@
     }
     .music-list .list {
         position: absolute;
-        top: 0;
+        top: 300px;
         bottom: 0;
         width: 100%;
         background: #222;
     }
-     .song-list-wrapper {
+    .music-list .list .song-list-wrapper {
         padding: 20px 30px;
     }
     .music-list .list .loading-container {
@@ -174,6 +233,7 @@
         -webkit-transform: translateY(-50%);
         transform: translateY(-50%);
     }
+
 
 
 </style>
