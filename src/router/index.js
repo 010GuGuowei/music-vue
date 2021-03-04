@@ -9,9 +9,9 @@ import Recommend from '../components/recommend/recommend.vue' // 推荐页面
 import Rank from '../components/rank/rank.vue'    // 排行页面
 import Singer from '../components/singer/singer.vue'    // 歌手页面
 import Search from '../components/search/search.vue'    // 搜索页面
-import Detial from '../components/detial/detial'  // 歌手详情页
-import DiscDetial from '../components/disc_detial/disc-detial'  // 推荐歌单详情页
-import RankDetial from '../components/rank-detial/rank-detial'
+import SingerDetail from '../components/singer-detail/singer-detail'  // 歌手详情页
+import RecommendDetial from '../components/recommend-detail/recommend-detail'  // 推荐歌单详情页
+import RankDetial from '../components/rank-detail/rank-detail'
 
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
@@ -28,33 +28,21 @@ export default new Router({
             path: '/recommend',
             name: 'Recommend',
             component: Recommend,
-            // children:[{
-            //     path:':id',
-            //     name:'disc_detial',
-            //     component:DiscDetial
-            // }]
         },
         {
-            path: '/disc_detial',
-            name:'disc_detial',
-            component:DiscDetial
+            path: '/recommend-detial',
+            name:'recommend-detial',
+            component:RecommendDetial,
         },
         {
             path: '/rank',
             name: 'Rank',
             component: Rank,
-            // children:[
-            //     {
-            //         path:':id',
-            //         name:'rand_detial',
-            //         component:RankDetial
-            //     }
-            // ]
         },
         {
             path:'/rank/:id',
             name:'rank_detial',
-            component: RankDetial
+            component: RankDetial,
         },
         {
             path: '/singer',
@@ -62,9 +50,9 @@ export default new Router({
             component: Singer,
         },
         {
-            path: '/detial/:id',
-            name: 'detial',
-            component: Detial
+            path: '/singer-detail/:id',
+            name: 'singer-detail',
+            component: SingerDetail
         },
         {
             path: '/search',

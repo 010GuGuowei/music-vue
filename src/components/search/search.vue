@@ -3,25 +3,37 @@
         <MHeader/>
         <tab></tab>
         <div class="search-box-wrapper">
+            <!-- 搜索框 -->
             <div class="search-box">
                 <i class="icon-search">Q</i>
                 <input class="box" v-model="query" placeholder="搜索歌曲、歌手">
                 <i class="icon-dismiss" @click="clear">X</i>
             </div>
-            <div class="shortcut-wrapper">
-                <div class="shortcut">
+        </div>
+        <!-- 热门搜索 -->
+        <div class="shortcut-wrapper">
+            <div class="shortcut">
+                <div>
                     <div class="hot-key">
                         <h1 class="title">热门搜索</h1>
                         <ul>
-                            <li class="item" v-for="(item,index) in searchHot" :key="index">
+                            <li class="item" v-for="(item,index) in searchHot" :key="index" @click="clickHotKey(item)">
                                 <span>{{item}}</span>
                             </li>
                         </ul>
                     </div>
+                    <!-- 搜索历史 -->
+                    <div class="search-history">
+                        <h2 class="title">
+                            <span class="text">搜索历史</span>
+                            <span class="clear" @click="clearHistory">
+                        <i class="icon-clear">X</i>
+                    </span>
+                        </h2>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -45,7 +57,6 @@
         },
         created() {
             this.getSearchHot()
-            this.getSearch()
         },
         methods: {
             // 获取热门搜索
@@ -66,17 +77,8 @@
                 })
                 // 取出前十条数据
                 this.searchHot.splice(10, 20)
-                console.log(this.searchHot)
+                // console.log(this.searchHot)
 
-            },
-            // 请求 搜索的结果
-            getSearch(search) {
-                axios.get(`/search?key=周杰伦`).then(res => {
-                    // console.log(res.data.data.list)
-                    this.normalizeSearch(res.data.data.list)
-                }).catch(err => {
-                    console.log('搜索失败', err)
-                })
             },
             // 处理搜索的结果
             normalizeSearch(list) {
@@ -84,18 +86,45 @@
                     let song = {
                         id: item.songmid,
                         name: item.songname,
-                        singer: item.singer[0].name
+                        singer: item.singer[0].name,
+                        album: item.albumname
                     }
                     this.searchList.push(song)
                 })
-                // console.log(this.searchList)
+                console.log(this.searchList)
+            },
+            // 热词的点击效果
+            clickHotKey(item) {
+                this.query = item
             },
             // 清空搜索框
             clear() {
                 console.log('clear')
                 this.query = ""
             },
+            // 清空历史搜索记录
+            clearHistory() {
+                console.log('清空搜索记录')
+            }
 
+        },
+        watch: {
+            query(newVal) {
+                if (!newVal) {
+                    return
+                }
+                setTimeout(() => {
+                    // console.log(newVal)
+                    // 请求搜索结果
+                    axios.get(`/search?key=${newVal}`).then(res => {
+                        // console.log(res.data.data.list)
+                        this.normalizeSearch(res.data.data.list)
+                    }).catch(err => {
+                        console.log('请求失败', err)
+                    })
+                }, 200)
+
+            }
         }
     }
 </script>

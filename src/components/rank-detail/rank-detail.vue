@@ -1,7 +1,9 @@
 <template>
     <div class="top-list">
+        <transition appear name="slide">
 <!--        <p>toplist</p><p>toplist</p><p>toplist</p><p>toplist</p><p>toplist</p><p>toplist</p><p>toplist</p>-->
         <music-list :title="title" :bg-image="image" :songs="this.songs"></music-list>
+        </transition>
     </div>
 </template>
 
@@ -35,9 +37,7 @@
             getRankList(){
                 // console.log(this.rank)
                 axios.get(`/top?id=${this.rank.id}`).then( res => {
-                    console.log(res.data.data)
-                    // this.rank.image = res.data.data.info.picUrl
-                    // console.log(this.rank.image)
+                    // console.log(res.data.data)
                     this.getSongsList(res.data.data.list)
                 })
             },
@@ -76,5 +76,16 @@
 </script>
 
 <style scoped>
+
+    .slide-enter-active, .slide-leave-active {
+        transition: all 0.3s
+    }
+
+
+    .slide-enter, .slide-leave-to {
+        transform: translate3d(100%, 0, 0)
+    }
+
+
 
 </style>

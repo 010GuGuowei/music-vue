@@ -98,7 +98,7 @@
 					url: '/songlist/list'
 				}).then(res => {
 					this.discList = res.data.data.list
-					console.log(this.discList)
+					// console.log(this.discList)
 				}).catch(err => console.log(err))
 			},
 
@@ -123,24 +123,14 @@
 				// 跳转到详情
 				// console.log(data)
 				// this.$router.push(`/recommend/${data.id}`)
-				this.$router.push(`/disc_detial`)
+				this.$router.push(`/recommend-detial`)
 
 
 			},
 
 
 		},
-		computed: {
-		// 	title() {
-		// 		return this.detial.desc
-		// 	},
-		// 	bgImage() {
-		// 		return this.detial.dir_pic_url2
-		// 	},
-		// 	songs() {
-		// 		return this.detial.songlist
-		// 	}
-		}
+		computed: {		}
 
 
 	}

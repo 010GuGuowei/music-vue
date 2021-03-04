@@ -10,7 +10,7 @@
     import axios from 'axios'
 
     export default {
-        name: "disc_detial",
+        name: "recommend_detial",
         created() {
             this.getData()
             this.getSongs()

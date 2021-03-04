@@ -10,9 +10,9 @@
                             <img :src="item.picUrl" width="100" height="100">
                         </div>
                         <ul class="songlist">
-                            <li v-for="(song,index) in item.songList" class="song" @click="selectItem(item)">
+                            <li v-for="(song,index) in item.song" class="song" @click="selectItem(item)">
                                 <span>{{index + 1}}.</span>
-                                <span>{{song.songname}} - {{song.singername}}</span>
+                                <span>{{song.title}} - {{song.singerName}}</span>
                             </li>
                         </ul>
                     </li>
@@ -28,8 +28,7 @@
 </template>
 
 <script>
-
-    import {getTopList} from "../../api/rank";
+    import axios from 'axios'
     import Scroll from '../../base/scroll/scroll'
     import Loading from '../../base/loading/loading'
     import MHeader from'../m-header/m-header';
@@ -52,29 +51,36 @@
         methods: {
             // 获取排行榜列表
             _getTopList() {
-                getTopList().then(res => {
-                    this.topList = res.data.topList
-
-                    console.log(res.data)
+                axios.get('/top/category?showDetail=1').then(res =>{
+                    // console.log('axios',res.data.data)
+                    this.normalizeTopList(res.data.data)
                 }).catch(err => {
-                    console.log(err)
+                    console.log('排行获取失败',err)
                 })
             },
+            // 处理排行榜数据
+            normalizeTopList(list){
+              list.forEach(item =>{
+                  // console.log(list)
+                  item.list.forEach(data =>{
+                      // console.log(data)
+                      this.topList.push(data)
+                  })
+              })
+                // console.log(this.topList)
+            },
             selectItem(item){
-                console.log(item)
+                // console.log(item)
                 let data ={
-                    id : item.id,
-                    title : item.topTitle,
-
-                    //y.gtimg.cn/music/photo_new/T002R300x300M000001uWkYh16jVTM_1.jpg?max_age=2592000
-                    //y.gtimg.cn/music/photo_new/T001R300x300M000${item.Fsinger_mid}.jpg?max_age=2592000
-
+                    id : item.topId,
+                    title : item.label,
+                    image : `//y.gtimg.cn/music/photo_new/T002R300x300M000${item.song[0].albumMid}_1.jpg?max_age=2592000`
 
                 }
-                console.log(data)
+                // console.log(data)
                 this.$store.commit('SET_RANK',data)
                 // console.log('selectItem',item)
-
+                // 跳转到详情
                 this.$router.push(`rank/${item.id}`)
             }
         },
@@ -86,7 +92,7 @@
     }
 </script>
 
-<style scoped>
+<style scoped >
 
     .rank {
         position: fixed;
