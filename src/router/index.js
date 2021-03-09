@@ -30,7 +30,7 @@ export default new Router({
             component: Recommend,
         },
         {
-            path: '/recommend-detial',
+            path: '/recommend-detial/:id',
             name:'recommend-detial',
             component:RecommendDetial,
         },

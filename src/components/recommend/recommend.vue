@@ -25,11 +25,11 @@
 					<ul>
 						<li v-for="(item,index) in discList" class="item" :key="index" @click="selectItem(item)">
 							<div class="icon">
-								<img width="60" height="60" v-lazy="item.imgurl">
+								<img width="60" height="60" v-lazy="item.cover">
 							</div>
 							<div class="text">
-								<h2 class="name" v-html="item.creator.name"></h2>
-								<p class="desc" v-html="item.dissname"></p>
+								<h2 class="name" v-html="item.title"></h2>
+								<p class="desc" v-html="item.username"></p>
 							</div>
 						</li>
 					</ul>
@@ -95,8 +95,9 @@
 			// 获取推荐歌单的数据
 			_getDiscList() {
 				axios({
-					url: '/songlist/list'
+					url: '/recommend/playlist/u'
 				}).then(res => {
+					// console.log(res.data.data)
 					this.discList = res.data.data.list
 					// console.log(this.discList)
 				}).catch(err => console.log(err))
@@ -113,9 +114,9 @@
 				// console.log(item)
 				// 详情需要拿到的数据
 				let data = {
-					id:item.dissid,	// id
-					image:item.imgurl,	// image
-					title:item.dissname,
+					id:item.content_id,	// 专辑id
+					image:item.cover,	// image
+					title:item.title,
 					target:'recommend'
 			}
 				//保存 title, image url recommend 到store中
@@ -123,7 +124,7 @@
 				// 跳转到详情
 				// console.log(data)
 				// this.$router.push(`/recommend/${data.id}`)
-				this.$router.push(`/recommend-detial`)
+				this.$router.push(`/recommend-detial/${data.id}`)
 
 
 			},

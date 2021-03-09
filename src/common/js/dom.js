@@ -1,22 +1,47 @@
-// 添加class名
-export function addClass(el,className) {
-    el.classList.add(className)
+export function hasClass (el, className) {
+  return el.classList.contains(className)
 }
 
-// 检查class名是否存在
-export function hasClass(el ,className) {
-    // 如果存在返回true 不存在返回false
-    return el.classList.contains(className)
+export function addClass (el, className) {
+  el.classList.add(className)
 }
 
+export function getData (el, name, val) {
+  const prefix = 'data-'
+  if (val) {
+    return el.setAttribute(prefix + name, val)
+  }
+  return el.getAttribute(prefix + name)
+}
 
-// 获取和设置属性名称
-export function getData(el ,name , val) {
-    let prefix = 'data-' + name
-    // 如果 val 存在,就是设置
-    if(val){
-        return el.setAttribute(prefix)
-    }else {     // 不存在则是获取
-        return el.getAttribute(prefix)
+let elementStyle = document.createElement('div').style
+
+let vendor = (() => {
+  let transformNames = {
+    webkit: 'webkitTransform',
+    Moz: 'MozTransform',
+    O: 'OTransform',
+    ms: 'msTransform',
+    standard: 'transform'
+  }
+
+  for (let key in transformNames) {
+    if (elementStyle[transformNames[key]] !== undefined) {
+      return key
     }
+  }
+
+  return false
+})()
+
+export function prefixStyle (style) {
+  if (vendor === false) {
+    return false
+  }
+
+  if (vendor === 'standard') {
+    return style
+  }
+
+  return vendor + style.charAt(0).toUpperCase() + style.substr(1)
 }

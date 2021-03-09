@@ -10,6 +10,8 @@
 <script>
     import axios from 'axios'
     import MusicList from '../music-list/music-list'
+    import { createSong, isValidMusic, processSongsUrl } from '../../common/js/song'
+
 
     export default {
         name: "rank-detial",
@@ -35,6 +37,10 @@
             },
             // 请求数据
             getRankList(){
+                if(!this.rank.id){
+                    this.$router.push('/rank')
+                    return
+                }
                 // console.log(this.rank)
                 axios.get(`/top?id=${this.rank.id}`).then( res => {
                     // console.log(res.data.data)
@@ -43,23 +49,30 @@
             },
             // 处理数据 拿到歌曲列表
             getSongsList(list){
-                // console.log(list)
+                let data = []
+                console.log(list)
                 list.forEach(item => {
                     let song = {
-                        id : item.songId,
+                        id : item.id,
+                        duration : item.interval,
+                        mid : item.mid,
                         name : item.name,
                         singer : item.singerName,
                         album : item.album.name,
-                        rank : item.rank
+                        rank : item.rank,
+                        lyric : '',
+                        url : '',
+                        filename : `C400${item.mid}.m4a`,
+                        image : `http://y.gtimg.cn/music/photo_new/T002R300x300M000${item.album.pmid}.jpg?max_age=2592000`
                     }
                     // console.log(song)
-                    this.songs.push(song)
+                    data.push(song)
+                })
+                processSongsUrl(data).then(res => {
+                    this.songs = res
                     // console.log(this.songs)
                 })
-
-
             }
-
         },
         computed:{
           title(){

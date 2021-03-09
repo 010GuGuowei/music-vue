@@ -5,9 +5,9 @@
         <div class="search-box-wrapper">
             <!-- 搜索框 -->
             <div class="search-box">
-                <i class="icon-search">Q</i>
+                <i class="icon-search icon"></i>
                 <input class="box" v-model="query" placeholder="搜索歌曲、歌手">
-                <i class="icon-dismiss" @click="clear">X</i>
+                <i class="icon-dismiss icon" @click="clear"></i>
             </div>
         </div>
         <!-- 热门搜索 -->
@@ -27,8 +27,8 @@
                         <h2 class="title">
                             <span class="text">搜索历史</span>
                             <span class="clear" @click="clearHistory">
-                        <i class="icon-clear">X</i>
-                    </span>
+                                <i class="icon icon-clear"></i>
+                            </span>
                         </h2>
                     </div>
                 </div>
@@ -191,6 +191,7 @@
 
     .search .shortcut-wrapper .shortcut .search-history .title .clear {
         position: relative;
+
     }
 
     .search .shortcut-wrapper .shortcut .search-history .title .clear:before {
@@ -265,7 +266,7 @@
     }
 
     .search-box .icon-dismiss {
-        font-size: 16px;
+        font-size: 18px;
         color: #222;
     }
 

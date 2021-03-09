@@ -1,14 +1,14 @@
 <template>
     <div class="music-list">
         <div class="back" @click="back">
-            <i class="icon-back"> < </i>
+            <i class="icon icon-back"></i>
         </div>
         <h1 class="title" v-html="title"></h1>
         <div class="bg-image" :style="bgStyle" ref="bgImage">
             <!-- 随机播放的按钮 -->
             <div class="play-wrapper">
                 <div ref="playBtn" v-show="songs.length>0" class="play" @click="random">
-                    <i class="icon-play"></i>
+                    <i class="icon icon-play"></i>
                     <span class="text">随机播放全部</span>
                 </div>
             </div>
@@ -83,13 +83,7 @@
             },
             // 播放点击的音乐
             selectItem(item,index){
-                // console.log(item,index)
-                // this.$store.commit('SET_CURRENT_INDEX', index)
-                // this.$store.commit('SET_PLAY_LIST', this.songs)
-                // this.$store.commit('SET_PLAYING_STATE', true)
-                // this.$store.commit('SET_FULL_SCREEN', true)
-                // this.$store.commit('SET_SEQUENCE_LIST', true)
-
+                // console.log(this.songs)
                 this.$store.dispatch('selectPlay',{
                     list :this.songs,
                     index : index
@@ -176,7 +170,7 @@
     .music-list .back .icon-back {
         display: block;
         padding: 10px;
-        font-size: 22px;
+        font-size: 24px;
         color: #ffcd32;
     }
 
@@ -229,7 +223,7 @@
         display: inline-block;
         vertical-align: middle;
         margin-right: 6px;
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .music-list .bg-image .play-wrapper .play .text {
