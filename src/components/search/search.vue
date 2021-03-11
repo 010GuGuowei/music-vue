@@ -3,21 +3,16 @@
         <MHeader/>
         <tab></tab>
         <div class="search-box-wrapper">
-            <!-- 搜索框 -->
-            <div class="search-box">
-                <i class="icon-search icon"></i>
-                <input class="box" v-model="query" placeholder="搜索歌曲、歌手">
-                <i class="icon-dismiss icon" @click="clear"></i>
-            </div>
+            <SearchBox ref="searchBox" @query="onQueryChange"></SearchBox>
         </div>
         <!-- 热门搜索 -->
-        <div class="shortcut-wrapper">
+        <div class="shortcut-wrapper" v-show="!query">
             <div class="shortcut">
                 <div>
                     <div class="hot-key">
                         <h1 class="title">热门搜索</h1>
                         <ul>
-                            <li class="item" v-for="(item,index) in searchHot" :key="index" @click="clickHotKey(item)">
+                            <li class="item" v-for="(item,index) in searchHot" :key="index" @click="setQuery(item)">
                                 <span>{{item}}</span>
                             </li>
                         </ul>
@@ -34,13 +29,20 @@
                 </div>
             </div>
         </div>
+        <!-- 搜索列表 -->
+        <div class="search-result" v-show="query">
+            <suggest :query="query"></suggest>
+        </div>
     </div>
 </template>
 
 <script>
     import MHeader from '../m-header/m-header';
+    import SearchBox from '../../base/search-box/search-box'
     import Tab from '../tab/tab';
+    import Suggest from '../suggest/suggest'
     import axios from 'axios'
+    import BScroll from 'better-scroll'
 
 
     export default {
@@ -50,10 +52,11 @@
                 searchHot: [],
                 query: '',
                 searchList: [],
+                timer: ''
             }
         },
         components: {
-            MHeader, Tab
+            MHeader, Tab,SearchBox,Suggest,
         },
         created() {
             this.getSearchHot()
@@ -81,21 +84,22 @@
 
             },
             // 处理搜索的结果
-            normalizeSearch(list) {
-                list.forEach(item => {
-                    let song = {
-                        id: item.songmid,
-                        name: item.songname,
-                        singer: item.singer[0].name,
-                        album: item.albumname
-                    }
-                    this.searchList.push(song)
-                })
-                console.log(this.searchList)
-            },
+            // normalizeSearch(list) {
+            //     list.forEach(item => {
+            //         let song = {
+            //             id: item.songmid,
+            //             name: item.songname,
+            //             singer: item.singer[0].name,
+            //             album: item.albumname
+            //         }
+            //         this.searchList.push(song)
+            //     })
+            //     console.log(this.searchList)
+            // },
+
             // 热词的点击效果
-            clickHotKey(item) {
-                this.query = item
+            setQuery(item){
+                this.$refs.searchBox.addQuery(item)
             },
             // 清空搜索框
             clear() {
@@ -105,24 +109,21 @@
             // 清空历史搜索记录
             clearHistory() {
                 console.log('清空搜索记录')
-            }
+            },
+            onQueryChange(query){
+              this.query = query
+            },
 
         },
         watch: {
+            // 监听input框
             query(newVal) {
-                if (!newVal) {
+                clearTimeout(this.timer)
+                if(!newVal){
                     return
                 }
-                setTimeout(() => {
-                    // console.log(newVal)
-                    // 请求搜索结果
-                    axios.get(`/search?key=${newVal}`).then(res => {
-                        // console.log(res.data.data.list)
-                        this.normalizeSearch(res.data.data.list)
-                    }).catch(err => {
-                        console.log('请求失败', err)
-                    })
-                }, 200)
+                this.query = newVal
+                console.log('this.query',this.query)
 
             }
         }
@@ -215,59 +216,6 @@
         bottom: 0;
     }
 
-    /*搜索框*/
-    .search-box {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
-        align-items: center;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        width: 100%;
-        padding: 0 6px;
-        height: 40px;
-        background: #333;
-        border-radius: 6px;
-    }
 
-    .search-box .icon-search {
-        font-size: 24px;
-        color: #222;
-    }
-
-    .search-box .box {
-        -webkit-box-flex: 1;
-        -ms-flex: 1;
-        flex: 1;
-        margin: 0 5px;
-        line-height: 18px;
-        background: #333;
-        color: #fff;
-        font-size: 14px;
-        outline: 0;
-    }
-
-    .search-box .box::-webkit-input-placeholder {
-        color: rgba(255, 255, 255, 0.3);
-    }
-
-    .search-box .box:-ms-input-placeholder {
-        color: rgba(255, 255, 255, 0.3);
-    }
-
-    .search-box .box::-ms-input-placeholder {
-        color: rgba(255, 255, 255, 0.3);
-    }
-
-    .search-box .box::placeholder {
-        color: rgba(255, 255, 255, 0.3);
-    }
-
-    .search-box .icon-dismiss {
-        font-size: 18px;
-        color: #222;
-    }
 
 </style>

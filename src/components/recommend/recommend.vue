@@ -50,7 +50,6 @@
 	import axios from 'axios'
 	import Banner from '../../base/banner/banner'
 	import Loading from '../../base/loading/loading'
-	// import { getRecommend, getDiscList } from '../../api/recommend'
 
 	export default {
 		name: "recommend",

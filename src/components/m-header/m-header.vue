@@ -29,12 +29,12 @@
         width: 30px;
         height: 32px;
         margin-right: 9px;
-        background-img:url(./logo@2x111.png);
+        background-img:url(./logo.png);
         background-size: 30px 32px;
     }
     @media (-webkit-min-device-pixel-ratio: 3), (min-device-pixel-ratio: 3) {
-        .m-header .icon[data-v-be498722] {
-            background-image: url(./logo@3x111.png);
+        .m-header .icon {
+            background-image: url(./logo2.png);
         }
     }
     .m-header .text {

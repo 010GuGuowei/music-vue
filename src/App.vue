@@ -5,7 +5,9 @@
 <!--    <tab></tab>-->
 
         <router-view />
+
         <player></player>
+
   </div>
 
 </template>

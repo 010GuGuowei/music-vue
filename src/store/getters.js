@@ -14,7 +14,7 @@ export const sequenceList = state => state.sequenceList
 
 export const currentIndex = state => state.currentIndex
 
-export const model = state => state.model
+export const mode = state => state.mode
 // 当前播放的歌曲
 export const currentSong = (state) => {
     // 通过当前的播放列表和index得到当前播放的歌曲  拿不到返回一个空对象

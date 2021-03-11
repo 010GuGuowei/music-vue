@@ -33,8 +33,9 @@
                         <span class="time time-r">{{format(currentSong.duration)}}</span>
                     </div>
                     <div class="operators">
-                        <div class="icon i-left">
-                            <i class="icon icon-sequence"></i>
+                        <!--底部控制栏-->
+                        <div class="icon i-left" @click="changeMode">
+                            <i :class="modeIcon"></i>
                         </div>
                         <div class="icon i-left" :class="disableCls">
                             <i class="icon icon-prev" @click="prev"></i>
@@ -80,14 +81,21 @@
                 </div>
             </div>
         </transition>
-        <audio ref="audio" @timeupdate="updateTime"
-               :src="currentSong.url"></audio>
+        <audio
+                ref="audio"
+                @timeupdate="updateTime"
+                :src="currentSong.url"
+                @ended="end"
+        ></audio>
     </div>
 </template>
 
 <script>
     import {mapGetters} from 'vuex'
     import ProgressBar from '../../base/progress-bar/progress-bar'
+    import {playMode} from '../../common/js/config'
+    import {shuffle} from '../../common/js/util'
+    import {sequenceList} from "../../store/getters";
 
     export default {
         name: "player",
@@ -95,25 +103,49 @@
         components: {ProgressBar},
         data() {
             return {
-                songReady:false,    // 可以点击下一首的状态
-                currentTime : 0,        // 当前歌曲的播放时间
+                songReady: false,    // 可以点击下一首的状态
+                currentTime: 0,        // 当前歌曲的播放时间
             };
         },
         //方法
         methods: {
             // 接搜到进度条改变，改变播放进度
-            onProgressBarChange(percent){
+            onProgressBarChange(percent) {
                 // console.log(percent)
                 // 当前歌曲的总时长 * 播放进度
                 this.$refs.audio.currentTime = this.currentSong.duration * percent
                 // 如果现在处于暂停状态 自动播放
-                if(!this.playing){
+                if (!this.playing) {
                     this.$store.commit('SET_PLAYING_STATE', !this.playing)
                 }
             },
-            // 切歌时按钮的样式
-            disableCls(){
-                return this.songReady ? '' : 'disable'
+            // 改变播放模式的icon图标,以及播放列表
+            changeMode() {
+                let mode = (this.mode + 1) % 3
+                this.$store.commit('SET_PLAY_MODE', mode)
+                // 修改播放列表
+                let list = null
+                if(mode === playMode.random){
+                    // 随机列表
+                    list = shuffle(this.sequenceList)
+                    // console.log('random',this.playList)
+                }
+                else {
+                    // 非随机模式改回顺序列表
+                    list = this.sequenceList
+                }
+                // 更新index
+                this.updateCurrentIndex(list)
+                // 更新列表
+                this.$store.commit('SET_PLAY_LIST',list)
+            },
+            // 跟新当前播放歌曲的index
+            updateCurrentIndex(list){
+                let index = list.findIndex((item) => {
+                    return this.currentSong.id === item.id
+                })
+                // console.log('index',index)
+                this.$store.commit('SET_CURRENT_INDEX',index)
             },
             // 播放暂停
             togglePlaying() {
@@ -132,31 +164,40 @@
                 // }
                 let index = this.currentIndex - 1
                 // 如果是第一首 播放最后一首
-                if(index === -1){
+                if (index === -1) {
                     index = this.playList.length - 1
                 }
-                this.$store.commit('SET_CURRENT_INDEX',index )
-                if(!this.playing){
-                    this.$store.commit('SET_PLAYING_STATE',true)
+                this.$store.commit('SET_CURRENT_INDEX', index)
+                if (!this.playing) {
+                    this.$store.commit('SET_PLAYING_STATE', true)
                 }
                 // this.songReady = false
             },
+            // 当前歌曲播放完成后自动播放下一首
+            end(){
+                // 单曲循环模式
+                if(this.mode === playMode.loop){
+                    this.$refs.audio.currentTime = 0
+                    this.$refs.audio.play()
+                }else{
+                    this.next()
+                }
+            },
             // 下一首
             next() {
-                //
                 // if(!this.songReady){
                 //     return
                 // }
-                console.log('next')
+                // console.log('播放列表', this.playList)
                 let index = this.currentIndex + 1
                 // 如果是最后一首播放第一首
-                if (index === this.playList){
+                if (index === this.playList.length) {
                     index = 0
                 }
                 this.$store.commit('SET_CURRENT_INDEX', index)
                 // 改变播放的状态
-                if(!this.playing){
-                    this.$store.commit('SET_PLAYING_STATE',true)
+                if (!this.playing) {
+                    this.$store.commit('SET_PLAYING_STATE', true)
                 }
                 // this.songReady = false
             },
@@ -179,21 +220,21 @@
                 this.$store.commit('SET_FULL_SCREEN', true)
             },
             // 歌曲的播放时间
-            updateTime(e){
+            updateTime(e) {
                 this.currentTime = e.target.currentTime
             },
             // 进度条左边的时间处理
-            format(time){
+            format(time) {
                 time = time | 0     // 取整
                 const minute = time / 60 | 0    // 分
                 const second = this._pad(time % 60)        // 秒
                 return `${minute}:${second}`
             },
             // 数字补零
-            _pad(num){
+            _pad(num) {
                 let len = num.toString().length
                 let n = 2
-                if(len < 2){
+                if (len < 2) {
                     num = '0' + num
                 }
                 return num
@@ -202,7 +243,7 @@
         //计算属性
         computed: {
             // 歌曲播放的进度
-            percent(){
+            percent() {
                 return this.currentTime / this.currentSong.duration
             },
             // 迷你播放器的暂停播放图标切换
@@ -217,17 +258,37 @@
             cdCls() {
                 return this.playing ? 'play' : 'play pause'
             },
+            // 播放模式的icon改变
+            modeIcon() {
+
+                if (this.mode === playMode.sequence) {
+                    return 'icon icon-sequence'
+                } else if (this.mode === playMode.random) {
+                    return 'icon icon-random'
+                } else {
+                    return 'icon icon-loop'
+                }
+            },
+            // 切歌时按钮的样式
+            disableCls() {
+                return this.songReady ? '' : 'disable'
+            },
             ...mapGetters([
                 'playList',  // 播放列表如果存在则显示
                 'fullScreen',   // 是否全屏显示播放页面
                 'currentSong',   // 当前播放歌曲的信息
                 'playing',       // 歌曲的播放状态
-                'currentIndex'      // 当前播放歌曲的索引
+                'currentIndex',      // 当前播放歌曲的索引
+                'mode',        // 播放模式
+                'sequenceList',     // 播放顺序列表
             ])
         },
         //侦听器
         watch: {
-            currentSong() {
+            currentSong(newSong , oldSong) {
+                if(newSong.id === oldSong.id){
+                    return
+                }
                 // 延时，在下次DOM更新后执行
                 this.$nextTick(() => {
                     this.$refs.audio.play()
@@ -251,7 +312,6 @@
         created() {
             // this.getPlayingState()
         },
-
         //页面渲染之前
         beforeMount() {
         },

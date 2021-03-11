@@ -8,7 +8,7 @@
 
     import MusicList from '../music-list/music-list'
     import {createSong, isValidMusic, processSongsUrl} from '../../common/js/song'
-    import {getSongList} from "../../api/recommend";
+    import {getUrl,getPlayUrl} from "../../common/js/getUrl";
     import axios from 'axios'
 
     export default {
@@ -33,16 +33,15 @@
                 axios.get(`/songlist?id=${id}`).then(res => {
                     // console.log(res.data.data.songlist)
                     // 处理请到的数据
-                    processSongsUrl(this._normalizeSongs(res.data.data.songlist)).then(song => {
-                        this.songs =song
+                    let list = this._normalizeSongs(res.data.data.songlist)
+                    getPlayUrl(list).then(res => {
+                        console.log('getPlayUrl',res)
+                        this.songs = res
                     })
-                    // console.log(this.songs)
                 }).catch(err => {
                     console.log(err)
                 })
-
             },
-
             // 处理数据
             _normalizeSongs(list) {
                 let ret = []
@@ -51,28 +50,15 @@
                         ret.push(createSong(musicData))
                     }
                 })
-                console.log(ret)
+                // console.log(ret)
                 return ret
-            }
-            // _getSongList(){
-            //     let id = this.$store.state.discList.id
-            //     if(!id){
-            //         this.$router.push('/recommend')
-            //         return
-            //     }
-            //     console.log(id)
-            //     getSongList(id).then(res =>{
-            //         console.log(res.data)
-            //     })
-            //
-            // },
+            },
             // 处理获取到的数据
             // normalizeSongs(list) {
             //     let data = []
-            //
-            //     console.log(list)
+            //     // console.log('处理数据前',list)
             //     // 遍历数据拿到歌曲列表
-            //     list.songlist.forEach(item => {
+            //     list.forEach(item => {
             //         let song = {
             //             // id: item.id,
             //             lyric: '',
@@ -87,11 +73,8 @@
             //         data.push(song)
             //     })
             //     // console.log(data)
-            //     lyricGet(data)      // 获取歌词
-            //     processSongsUrl(data)   // 获取播放链接
-            //     this.songs = data
-            //     console.log(this.songs)
-            // }
+            //     return  data
+            // },
         },
         components: {
             MusicList

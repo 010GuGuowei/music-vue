@@ -1,7 +1,6 @@
 <template>
     <div class="top-list">
         <transition appear name="slide">
-<!--        <p>toplist</p><p>toplist</p><p>toplist</p><p>toplist</p><p>toplist</p><p>toplist</p><p>toplist</p>-->
         <music-list :title="title" :bg-image="image" :songs="this.songs"></music-list>
         </transition>
     </div>
@@ -10,8 +9,7 @@
 <script>
     import axios from 'axios'
     import MusicList from '../music-list/music-list'
-    import { createSong, isValidMusic, processSongsUrl } from '../../common/js/song'
-
+    import {getUrl,getPlayUrl} from "../../common/js/getUrl";
 
     export default {
         name: "rank-detial",
@@ -47,10 +45,11 @@
                     this.getSongsList(res.data.data.list)
                 })
             },
+
             // 处理数据 拿到歌曲列表
             getSongsList(list){
                 let data = []
-                console.log(list)
+                // console.log(list)
                 list.forEach(item => {
                     let song = {
                         id : item.id,
@@ -68,11 +67,12 @@
                     // console.log(song)
                     data.push(song)
                 })
-                processSongsUrl(data).then(res => {
+
+                getPlayUrl(data).then(res =>{
                     this.songs = res
-                    // console.log(this.songs)
                 })
-            }
+            },
+
         },
         computed:{
           title(){
